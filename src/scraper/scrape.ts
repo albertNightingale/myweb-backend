@@ -3,7 +3,7 @@ import {
   load,
 } from "cheerio";
 import _ from "lodash";
-import { getProfilePage, getProfileForSpecificYear } from "./api";
+import { getProfilePage, getProfileForSpecificYear } from "./githubapi";
 
 const COLOR_MAP = {
   0: "#ebedf0",
@@ -137,7 +137,7 @@ function getYears(yearDatas: ContributionType[], format: string) {
   return format === "nested" ? obj : arr;
 }
 
-function getContribution(yearDatas: ContributionType[], format: string) {
+function getContribution(yearDatas: ContributionType[], format: string): ContributionType[] | ContributionType {
   if (format === "nested") {
     return yearDatas.reduce((acc, curr) => _.merge(acc, curr.contributions))
   }

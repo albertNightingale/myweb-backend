@@ -1,18 +1,11 @@
-import { replaceFile } from "./gcapi";
-import {
-  scrapeDataForAllYears
-} from "./scrape";
-import fs from "fs";
+import express from "express";
 
-async function start() {
-  const username = "albertNightingale";
-  const format = "flat";
-  const data = await scrapeDataForAllYears(username, format);
+const app = express();
 
-  // write data into file and name it output
-  fs.promises.writeFile("./output.txt", JSON.stringify(data));
+app.get("/githubcontribution", (req, res) => {
 
-  replaceFile("portfolio", "github-contribution", "./output.txt");
-}
+});
 
-start();
+app.listen(3000, () => {
+  console.log("Server listening on port 3000");
+});
