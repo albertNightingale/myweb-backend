@@ -4,7 +4,7 @@ import {
 } from "./scrape";
 import fs from "fs";
 
-export default async function start() {
+export default async () => {
   const username = "albertNightingale";
   const format = "flat";
   const data = await scrapeDataForAllYears(username, format);

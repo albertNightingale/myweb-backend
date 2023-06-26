@@ -2,6 +2,7 @@ import { authorize } from "./auth";
 import { uploadFile } from "./uploadfile";
 import { findFile, findFolder } from "./findfiles";
 import { deleteFile } from "./deletefile";
+import { google } from "googleapis";
 
 export async function replaceFile(folderPath: string, uploadFileName: string, localFilepath: string) {
   const authClient = await authorize();
@@ -36,4 +37,27 @@ export async function replaceFile(folderPath: string, uploadFileName: string, lo
   // upload the file
   console.log(`Uploading ${localFilepath} to ${folderPath}...`);
   await uploadFile(authClient, folderPath, uploadFileName, localFilepath);
+}
+
+export async function downloadFiles(uploadFileName: string) {
+  const authClient = await authorize();
+
+  const file = await findFile(authClient, uploadFileName);
+  console.log(file);
+
+  const drive = google.drive({ version: 'v3', auth: authClient });
+  try {
+    const res = await drive.files.get({
+      fileId: file.id,
+      alt: 'media',
+    });
+
+    const data = res.data;
+    console.log(data.toString());
+    return data;
+  }
+  catch (error) {
+    console.log(error);
+    return null;
+  }
 }
