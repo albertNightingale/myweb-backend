@@ -39,13 +39,11 @@ export async function replaceFile(folderPath: string, uploadFileName: string, lo
   await uploadFile(authClient, folderPath, uploadFileName, localFilepath);
 }
 
-export async function downloadFiles(uploadFileName: string) {
+export async function readBlobContent(uploadFileName: string) {
   const authClient = await authorize();
-
   const file = await findFile(authClient, uploadFileName);
-  console.log(file);
-
   const drive = google.drive({ version: 'v3', auth: authClient });
+
   try {
     const res = await drive.files.get({
       fileId: file.id,
@@ -57,6 +55,26 @@ export async function downloadFiles(uploadFileName: string) {
     return data;
   }
   catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function readGDocsHTML(uploadFileName: string): Promise<string> {
+  const authClient = await authorize();
+  const file = await findFile(authClient, uploadFileName);
+  const drive = google.drive({ version: 'v3', auth: authClient });
+
+  try {
+    const res = await drive.files.export({
+      fileId: file.id,
+      mimeType: 'text/html',
+    });
+
+    const data = res.data;
+    // console.log(data.toString());
+    return data.toString();
+  } catch (error) {
     console.log(error);
     return null;
   }
