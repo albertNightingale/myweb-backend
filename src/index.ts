@@ -1,31 +1,23 @@
-import express from "express";
+import express, { Express } from "express";
 import fs from "fs";
-import { readBlobContent, readGDocsHTML, replaceFile } from "./gcapi";
+import { replaceFile } from "./gcapi";
 
 import scrapeGithub from "./scraper/github";
-import scrapeGDocs from "./scraper/googledocs";
+
+import GithubContribution from "./endpoints/GithubContribution";
+import Project from "./endpoints/Project";
+
+import cors from "cors";
 
 const app = express();
 
-app.get("/githubcontribution", async (req, res) => {
-  const result = await readBlobContent("output.txt");
-  res.status(200).send(result);
-});
+GithubContribution(app);
+Project(app);
 
-app.get("/project", async (req, res) => {
-  const gdocsHTML = await readGDocsHTML("projects");
+app.use(cors());
 
-  if (gdocsHTML) {
-    scrapeGDocs(gdocsHTML);
-    res.status(200).send(gdocsHTML);
-  }
-  else {
-    res.status(400).send("No data found");
-  }
-});
-
-app.listen(3000, () => {
-  console.log("Server listening on port 3000");
+app.listen(4000, () => {
+  console.log("Server listening on port 4000");
 });
 
 setInterval(async () => {

@@ -5,16 +5,18 @@ import {
 import {
   scrapeContentList, scrapeHeader
 } from "./scrape";
+import { Project } from "../../types";
 
-export default (content: string) => {
+export default (content: string): Array<Project> => {
   const $ = load(content);
 
   const headers = scrapeHeader($);
-  const components = scrapeContentList<any>($);
+  const projectList = scrapeContentList<Project>($);
 
-  const map = new Map<string, any>();
-  if (headers.length === components.length) {
-    headers.forEach((el, index) => map.set(el, components[index]));
+  if (headers.length === projectList.length) {
+    return projectList;
   }
-  return map;
+  else {
+    throw new Error("Headers and components size do not match, please check the google docs!!");
+  }
 }
