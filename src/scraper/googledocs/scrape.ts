@@ -1,17 +1,20 @@
-export function scrapeContentList<T>($: cheerio.Root) {
+export function scrapeContentList($: cheerio.Root) {
   // get all ul tags
   const projectList = $("ul").get().map((el) => {
     const children = $(el).children().get();
     if (children.length > 0) {
-      const obj = {};
+      const dict = new Map<string, string>();
       children.forEach((el) => {
         const text = $(el).text();
         const splitIdx = text.indexOf(": ") + 2;
-        const key = text.substring(0, splitIdx - 2);
-        const value = text.substring(splitIdx);
-        obj[key] = value;
+        const key = text.substring(0, splitIdx - 2).trim();
+        const value = text.substring(splitIdx).trim();
+        if (dict.has(key)) {
+          throw new Error(`duplicate key ${key} when scraping the google doc, please check the google doc containing ${el}`);
+        }
+        dict.set(key, value);
       });
-      return obj as T;
+      return dict;
     }
   });
 

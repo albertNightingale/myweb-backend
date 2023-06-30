@@ -4,6 +4,7 @@ import scrapeGDocs from "../scraper/googledocs";
 
 export default async (app: Express) => {
   app.get("/projects", async (req, res) => {
+    console.log("request for projects");
     const gdocsHTML = await readGDocsHTML("projects");
 
     if (gdocsHTML) {
