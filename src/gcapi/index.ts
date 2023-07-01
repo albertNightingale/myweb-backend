@@ -5,33 +5,25 @@ import { deleteFile } from "./deletefile";
 import { google } from "googleapis";
 
 export async function replaceFile(folderPath: string, uploadFileName: string, localFilepath: string) {
+
   const authClient = await authorize();
 
   // check if the file exists
   const folder = await findFolder(authClient, folderPath);
   if (!folder) {
-    console.log(`Folder ${folderPath} not found.`);
-    return;
+    throw `Folder ${folderPath} not found.`;
   }
-  else {
-    console.log(`Folder ${folderPath} found.`);
-  }
+
   const file = await findFile(authClient, uploadFileName);
 
-  if (file) {
-    console.log(`File ${uploadFileName} found.`);
-    // delete the file
-    const deletionSucceed = await deleteFile(authClient, file.id);
-    if (!deletionSucceed) {
-      console.log(`Failed to delete file ${uploadFileName}.`);
-      return;
-    }
-    else {
-      console.log(`File ${uploadFileName} deleted.`);
-    }
+  if (!file) {
+    throw `File ${uploadFileName} not found.`;
   }
-  else {
-    console.log(`File ${uploadFileName} not found.`);
+  console.log(`File ${uploadFileName} found.`);
+  // delete the file
+  const deletionSucceed = await deleteFile(authClient, file.id);
+  if (!deletionSucceed) {
+    throw `File ${uploadFileName} deletion failed.`;
   }
 
   // upload the file
@@ -40,11 +32,10 @@ export async function replaceFile(folderPath: string, uploadFileName: string, lo
 }
 
 export async function readBlobContent(uploadFileName: string) {
-  const authClient = await authorize();
-  const file = await findFile(authClient, uploadFileName);
-  const drive = google.drive({ version: 'v3', auth: authClient });
-
   try {
+    const authClient = await authorize();
+    const file = await findFile(authClient, uploadFileName);
+    const drive = google.drive({ version: 'v3', auth: authClient });
     const res = await drive.files.get({
       fileId: file.id,
       alt: 'media',
@@ -55,17 +46,16 @@ export async function readBlobContent(uploadFileName: string) {
     return data;
   }
   catch (error) {
-    console.log(error);
+    console.log("readBlobContent:", error);
     return null;
   }
 }
 
 export async function readGDocsHTML(uploadFileName: string): Promise<string> {
-  const authClient = await authorize();
-  const file = await findFile(authClient, uploadFileName);
-  const drive = google.drive({ version: 'v3', auth: authClient });
-
   try {
+    const authClient = await authorize();
+    const file = await findFile(authClient, uploadFileName);
+    const drive = google.drive({ version: 'v3', auth: authClient });
     const res = await drive.files.export({
       fileId: file.id,
       mimeType: 'text/html',
@@ -75,7 +65,7 @@ export async function readGDocsHTML(uploadFileName: string): Promise<string> {
     // console.log(data.toString());
     return data.toString();
   } catch (error) {
-    console.log(error);
+    console.log("readGDocsHTML:", error);
     return null;
   }
 }

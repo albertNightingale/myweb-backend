@@ -22,8 +22,14 @@ app.listen(4000, () => {
 });
 
 setInterval(async () => {
-  const data = await scrapeGithub("albertNightingale");
-  // write data into file and name it output
-  await fs.promises.writeFile("./output.txt", JSON.stringify(data));
-  replaceFile("portfolio", "github-contribution", "./output.txt");
+
+  try {
+    const data = await scrapeGithub("albertNightingale");
+    // write data into file and name it output
+    await fs.promises.writeFile("./output.txt", JSON.stringify(data));
+    replaceFile("portfolio", "github-contribution", "./output.txt");
+  } catch (error) {
+    console.log(error);
+  }
+
 }, 3600 * 1000 * 1);

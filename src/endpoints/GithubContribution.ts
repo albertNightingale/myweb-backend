@@ -4,7 +4,13 @@ import { readBlobContent } from "../gcapi";
 
 export default async (app: Express) => {
   app.get("/githubcontribution", async (req, res) => {
+
     const result = await readBlobContent("output.txt");
-    res.status(200).send(result);
+    if (result) {
+      res.status(200).send(result);
+    }
+    else {
+      res.status(400).send("issue with google docs api");
+    }
   });
 }
