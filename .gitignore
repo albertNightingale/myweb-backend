@@ -2,7 +2,7 @@ auth
 chrome_auth*
 node_modules
 
-output.txt
+output*.txt
 
 
 .env

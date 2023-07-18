@@ -1,11 +1,37 @@
+import e from "express";
 import {
-  scrapeDataForAllYears
+  Contribution,
+  scrapeDataForLastYear
 } from "./scrape";
-import fs from "fs";
 
 export default async (username: string) => {
-  const format = "flat";
-  const data = await scrapeDataForAllYears(username, format);
+  const data = await scrapeDataForLastYear(username);
 
-  return data;
+  // given the data with contributions, split it into multiple arrays by the day of the week
+  const map = new Map<string, Array<Contribution>>([
+    ["Monday", []],
+    ["Tuesday", []],
+    ["Wednesday", []],
+    ["Thursday", []],
+    ["Friday", []],
+    ["Saturday", []],
+    ["Sunday", []],
+  ]);
+
+  data.contributions.forEach(e => map.get(e.dayOfWeek).push(e));
+
+  return {
+    startingDate: data.startingDate,
+    endingDate: data.endingDate,
+    contributions: {
+      monday: map.get("Monday"),
+      tuesday: map.get("Tuesday"),
+      wednesday: map.get("Wednesday"),
+      thursday: map.get("Thursday"),
+      friday: map.get("Friday"),
+      saturday: map.get("Saturday"),
+      sunday: map.get("Sunday"),
+    },
+    contribCount: data.contribCount,
+  }
 }

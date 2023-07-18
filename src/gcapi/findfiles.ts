@@ -45,18 +45,12 @@ export async function findFolder(authClient: Auth.OAuth2Client, folderName: stri
 export async function findFile(authClient: Auth.OAuth2Client, fileName: string) {
   const files = await getFiles(authClient, `name = '${fileName}'`);
 
-  if (!files) {
-    return null;
-  }
-
-  const result = files.find((file) => { return file.name === fileName });
-
-  if (!result) {
-    return null;
+  if (!files || files.length === 0) {
+    throw "cannot find the file named " + fileName;
   }
 
   return {
-    name: result?.name,
-    id: result?.id,
+    name: files[0]?.name,
+    id: files[0].id,
   }
 }

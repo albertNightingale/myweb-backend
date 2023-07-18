@@ -27,7 +27,7 @@ export async function replaceFile(folderPath: string, uploadFileName: string, lo
   }
 
   // upload the file
-  console.log(`Uploading ${localFilepath} to ${folderPath}...`);
+  console.log(`Uploading ${localFilepath} to ${folderPath} as ${uploadFileName}...`);
   await uploadFile(authClient, folderPath, uploadFileName, localFilepath);
 }
 
@@ -42,7 +42,6 @@ export async function readBlobContent(uploadFileName: string) {
     });
 
     const data = res.data;
-    console.log(data.toString());
     return data;
   }
   catch (error) {
