@@ -1,22 +1,30 @@
 import { Express } from "express";
 import { readGDocsHTML } from "../gcapi";
 import scrapeGDocs from "../scraper/googledocs";
+import storage from "../data";
 
 export default async (app: Express) => {
   app.get("/projects", async (req, res) => {
 
-    const gdocsHTML = await readGDocsHTML("projects");
-    if (gdocsHTML) {
-      try {
+    try {
+      let result = storage["projects"];
+      if (!result) {
+        console.log("cannot find projects in storage, fetching from google docs");
+        const gdocsHTML = await readGDocsHTML("projects");
         const projects = scrapeGDocs(gdocsHTML);
-        res.status(200).send(projects);
+        storage["projects"] = projects;
+        result = projects;
       }
-      catch (error) {
-        res.status(403).send(error);
+
+      if (result) {
+        res.status(200).send(result);
       }
-    }
-    else {
-      res.status(400).send("issue with google docs api");
+      else {
+        res.status(400).send("issue with google docs api");
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(400).send("issue with google docs api" + error);
     }
   });
 }

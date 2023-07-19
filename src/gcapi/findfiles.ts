@@ -46,7 +46,7 @@ export async function findFile(authClient: Auth.OAuth2Client, fileName: string) 
   const files = await getFiles(authClient, `name = '${fileName}'`);
 
   if (!files || files.length === 0) {
-    throw "cannot find the file named " + fileName;
+    return null;
   }
 
   return {
