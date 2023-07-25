@@ -1,28 +1,20 @@
 import { Express } from "express";
 
-import { readBlobContent } from "../gcapi";
+import getData from "../data/gitcontributions";
 
-import storage from "../data";
-
-export default async (app: Express) => {
-  app.get("/githubContribution", async (req, res) => {
-    try {
-      let result = storage["github-contribution"];
-      if (!result) {
-        console.log("cannot find github contribution in storage, fetching from google drive");
-        const result = await readBlobContent("github-contribution");
-        storage["github-contribution"] = result;
-      }
-
-      if (result) {
-        res.status(200).send(result);
-      }
-      else {
-        res.status(400).send("issue with github");
-      }
-    } catch (error) {
-      console.log(error);
-      res.status(400).send("issue with github" + error);
+export default async (req: any, res: any) => {
+  try {
+    const data = await getData();
+    res.send(data);
+  }
+  catch (err: any) {
+    console.log(`Error getting projects: ${err}`)
+    const errorCode = Number.parseInt(err.message.substring(0, err.message.indexOf(": ")));
+    if ((errorCode === Number.NaN)) {
+      res.status(500).send(`Error getting projects: ${err}`);
     }
-  });
+    else {
+      res.status(errorCode).send(`Error getting projects: ${err}`);
+    }
+  }
 }
