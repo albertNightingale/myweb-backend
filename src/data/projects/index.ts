@@ -1,9 +1,10 @@
 import awsData from "./projects-awsdata";
 import devData from "./projects-devdata";
-import { Environment } from "../../../types";
+
+import { isDev } from "../../";
 
 export default async () => {
-  if (process.env.environment === Environment.development) {
+  if (isDev) {
     return devData;
   }
   else {

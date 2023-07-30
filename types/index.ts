@@ -29,8 +29,3 @@ export interface Contribution {
   date: string;
   dayOfWeek: string;
 }
-
-export enum Environment {
-  development = "dev",
-  production = "prod"
-}
