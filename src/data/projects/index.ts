@@ -5,7 +5,7 @@ import { isDev } from "../../";
 
 export default async () => {
   if (isDev) {
-    return devData;
+    return JSON.stringify(devData);
   }
   else {
     return await awsData();

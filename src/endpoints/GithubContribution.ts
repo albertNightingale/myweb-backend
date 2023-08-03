@@ -6,16 +6,16 @@ export default async (app: Express) => {
   app.get("/githubContribution", async (req: any, res: any) => {
     try {
       const data = await getData();
-      res.send(data);
+      res.status(200).send(data);
     }
     catch (err: any) {
-      console.log(`Error getting projects: ${err}`)
+      console.log(`Error getting contributions: ${err}`)
       const errorCode = Number.parseInt(err.message.substring(0, err.message.indexOf(": ")));
       if ((errorCode === Number.NaN)) {
-        res.status(500).send(`Error getting projects: ${err}`);
+        res.status(500).send(`Error getting contributions: ${err}`);
       }
       else {
-        res.status(errorCode).send(`Error getting projects: ${err}`);
+        res.status(errorCode).send(`Error getting contributions: ${err}`);
       }
     }
   });
