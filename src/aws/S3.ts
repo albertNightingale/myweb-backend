@@ -3,25 +3,6 @@ import { fromIni } from "@aws-sdk/credential-providers";
 
 import { isDev } from "..";
 
-function getClient(): S3Client {
-  const region = "us-east-1";
-  try {
-    if (isDev) {
-      return new S3Client({
-        region: region,
-        credentials: fromIni({ profile: "default" }),
-      });
-    } else {
-      return new S3Client({
-        region: region,
-      });
-    }
-  }
-  catch (err) {
-    throw new Error(`Error getting client: ${err}`);
-  }
-}
-
 export default async (key: string) => {
   const client = getClient();
   const bucketName = "portfolio-bucket-albert";
@@ -41,6 +22,25 @@ export default async (key: string) => {
     throw new Error(`500: Error getting object from S3 for ${key} in bucket ${bucketName}: ${err}`);
   }
 };
+
+function getClient(): S3Client {
+  const region = "us-east-1";
+  try {
+    if (isDev) {
+      return new S3Client({
+        region: region,
+        credentials: fromIni({ profile: "default" }),
+      });
+    } else {
+      return new S3Client({
+        region: region,
+      });
+    }
+  }
+  catch (err) {
+    throw new Error(`Error getting client: ${err}`);
+  }
+}
 
 async function getData(client: S3Client, bucketName: string, key: string) {
   const command = new GetObjectCommand({

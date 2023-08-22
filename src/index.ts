@@ -2,6 +2,7 @@ import * as express from "express";
 
 import GithubContribution from "./endpoints/GithubContribution";
 import Project from "./endpoints/Project";
+import PastExperiences from "./endpoints/PastExperiences";
 
 import * as cors from "cors";
 import * as morgan from "morgan";
@@ -22,6 +23,7 @@ export default function appConfiguration(isDevelopment: boolean) {
   // add endpoints
   GithubContribution(app);
   Project(app);
+  PastExperiences(app);
 
   return app;
 }
